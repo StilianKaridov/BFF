@@ -1,4 +1,4 @@
-package com.tinqin.bff.api.operations.item;
+package com.tinqin.bff.api.operations.item.getbyid;
 
 import com.tinqin.bff.api.operations.base.OperationResponse;
 import lombok.AccessLevel;

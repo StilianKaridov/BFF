@@ -1,8 +1,8 @@
 package com.tinqin.bff.core;
 
-import com.tinqin.bff.api.operations.item.ItemGetByIdOperation;
-import com.tinqin.bff.api.operations.item.ItemRequest;
-import com.tinqin.bff.api.operations.item.ItemResponse;
+import com.tinqin.bff.api.operations.item.getbyid.ItemGetByIdOperation;
+import com.tinqin.bff.api.operations.item.getbyid.ItemRequest;
+import com.tinqin.bff.api.operations.item.getbyid.ItemResponse;
 import com.tinqin.storage.api.operations.get.ItemGetByIdResponse;
 import com.tinqin.storage.restexport.StorageRestClient;
 import com.tinqin.zoostore.api.operations.item.get.GetItemByIdResponse;

@@ -44,7 +44,7 @@ public class ItemController {
         ItemGetByTagRequest itemRequest = ItemGetByTagRequest
                 .builder()
                 .title(title)
-                .pageNumber(pageNumber - 1)
+                .pageNumber(pageNumber)
                 .pageSize(pageSize)
                 .build();
 

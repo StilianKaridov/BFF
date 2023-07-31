@@ -9,6 +9,7 @@
         <module>rest</module>
         <module>core</module>
         <module>domain</module>
+        <module>persistence</module>
     </modules>
 
     <parent>
@@ -26,6 +27,7 @@
         <revision>0.0.1-SNAPSHOT</revision>
         <storage.revision>0.0.3-SNAPSHOT</storage.revision>
         <zoostore.revision>0.0.3-SNAPSHOT</zoostore.revision>
+        <jjwt.revision>0.11.5</jjwt.revision>
     </properties>
 
     <dependencies>
@@ -34,15 +36,32 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+<!--        Spring Security-->
+
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.revision}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.revision}</version>
+        </dependency>
+
+<!--        Spring Security-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

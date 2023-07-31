@@ -49,28 +49,38 @@ public class ItemGetByTagOperationProcessor implements ItemGetByTagOperation {
         List<ItemGetByTagWithPriceAndQuantityDataResponse> mappedItems = new ArrayList<>();
 
         for (ItemGetByTagDataResponse itemFromZooStore : itemsFromZooStore.getItems()) {
-            for (ItemGetByIdResponse itemFromStorage : itemsFromStorage.getItems()) {
-                if (itemFromStorage.getItemId().equals(itemFromZooStore.getId())) {
-                    mappedItems.add(
-                            ItemGetByTagWithPriceAndQuantityDataResponse
-                                    .builder()
-                                    .id(itemFromZooStore.getId())
-                                    .title(itemFromZooStore.getTitle())
-                                    .description(itemFromZooStore.getDescription())
-                                    .vendor(itemFromZooStore.getVendor())
-                                    .multimedia(itemFromZooStore.getMultimedia())
-                                    .tags(itemFromZooStore.getTags())
-                                    .price(itemFromStorage.getPrice())
-                                    .quantity(itemFromStorage.getQuantity())
-                                    .build()
-                    );
-                }
-            }
+            itemsFromStorage
+                    .getItems()
+                    .stream()
+                    .filter(
+                            itemFromStorage -> itemFromStorage
+                                    .getItemId()
+                                    .equals(itemFromZooStore.getId())
+                    )
+                    .map(itemFromStorage -> mapToItemFromStorageAndZooStoreData(itemFromZooStore, itemFromStorage))
+                    .forEach(mappedItems::add);
         }
 
         return ItemGetByTagWithPriceAndQuantityResponse
                 .builder()
                 .items(mappedItems)
+                .build();
+    }
+
+    private ItemGetByTagWithPriceAndQuantityDataResponse mapToItemFromStorageAndZooStoreData(
+            ItemGetByTagDataResponse zooStoreItem,
+            ItemGetByIdResponse storageItem
+    ) {
+        return ItemGetByTagWithPriceAndQuantityDataResponse
+                .builder()
+                .id(zooStoreItem.getId())
+                .title(zooStoreItem.getTitle())
+                .description(zooStoreItem.getDescription())
+                .vendor(zooStoreItem.getVendor())
+                .multimedia(zooStoreItem.getMultimedia())
+                .tags(zooStoreItem.getTags())
+                .price(storageItem.getPrice())
+                .quantity(storageItem.getQuantity())
                 .build();
     }
 }

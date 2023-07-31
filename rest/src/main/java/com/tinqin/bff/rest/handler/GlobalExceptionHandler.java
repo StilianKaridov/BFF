@@ -1,10 +1,18 @@
 package com.tinqin.bff.rest.handler;
 
+import com.tinqin.bff.core.exception.ExistingPhoneNumberException;
+import com.tinqin.bff.core.exception.NoSuchUserException;
+import com.tinqin.bff.core.exception.UserExistsException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -26,5 +34,43 @@ public class GlobalExceptionHandler {
         String errorMessage = ex.getParameterName() + " is required.";
 
         return ResponseEntity.badRequest().body(errorMessage);
+    }
+
+    @ExceptionHandler(value = UserExistsException.class)
+    public ResponseEntity<String> handlerUserExistsException(UserExistsException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = ExistingPhoneNumberException.class)
+    public ResponseEntity<String> handlerExistingPhoneNumberException(ExistingPhoneNumberException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    public ResponseEntity<String> handlerBadCredentialsException(BadCredentialsException ex) {
+        return ResponseEntity.status(403).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = UsernameNotFoundException.class)
+    public ResponseEntity<String> handlerUsernameNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = NoSuchUserException.class)
+    public ResponseEntity<String> handlerNoSuchUserException(NoSuchUserException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        StringBuilder errors = new StringBuilder();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String message = error.getDefaultMessage();
+            errors.append(message).append("\n");
+        });
+
+        return ResponseEntity.badRequest().body(errors.toString());
     }
 }

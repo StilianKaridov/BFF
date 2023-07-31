@@ -40,16 +40,10 @@ public class UserRegisterOperationProcessor implements UserRegisterOperation {
                     throw new ExistingPhoneNumberException();
                 });
 
-        Role role;
-
-        if (this.userRepository.count() == 0) {
-            role = Role.ADMIN;
-        } else {
-            role = Role.USER;
-        }
+        Role role = this.userRepository.count() == 0 ? Role.ADMIN : Role.USER;
 
         String email = input.getEmail();
-        String hashedPassword = passwordEncoder.encode(input.getPassword());
+        String hashedPassword = this.passwordEncoder.encode(input.getPassword());
         String firstName = input.getFirstName();
         String lastName = input.getLastName();
         String phoneNumber = input.getPhoneNumber();

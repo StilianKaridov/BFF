@@ -27,7 +27,7 @@ public class UserChangePasswordOperationProcessor implements UserChangePasswordO
         User user = this.userRepository.findByEmail(input.getEmail())
                 .orElseThrow(NoSuchUserException::new);
 
-        String hashedPassword = this.passwordEncoder.encode(user.getPassword());
+        String hashedPassword = this.passwordEncoder.encode(input.getPassword());
 
         User userWithChangedPassword = User
                 .builder()

@@ -2,7 +2,6 @@ package com.tinqin.bff.rest.config;
 
 import com.tinqin.bff.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.logging.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

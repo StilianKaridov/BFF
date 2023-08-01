@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/bff/users")
 public class UserController {
@@ -53,9 +55,16 @@ public class UserController {
 
     @PutMapping("/changePassword")
     public ResponseEntity<UserChangePasswordResponse> changePassword(
-            @RequestBody @Valid UserChangePasswordRequest userChangePasswordRequest
+            @RequestBody @Valid UserChangePasswordRequest userChangePasswordRequest,
+            Principal principal
     ) {
-        UserChangePasswordResponse userWithChangedPassword = this.userChangePasswordOperation.process(userChangePasswordRequest);
+        UserChangePasswordRequest userRequest = UserChangePasswordRequest
+                .builder()
+                .email(principal.getName())
+                .password(userChangePasswordRequest.getPassword())
+                .build();
+
+        UserChangePasswordResponse userWithChangedPassword = this.userChangePasswordOperation.process(userRequest);
 
         return ResponseEntity.ok(userWithChangedPassword);
     }

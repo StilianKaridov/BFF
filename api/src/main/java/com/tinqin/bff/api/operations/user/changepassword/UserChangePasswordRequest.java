@@ -1,7 +1,7 @@
 package com.tinqin.bff.api.operations.user.changepassword;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqin.bff.api.operations.base.OperationRequest;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,8 +17,7 @@ import lombok.Setter;
 @Builder
 public class UserChangePasswordRequest implements OperationRequest {
 
-    @Email(message = "Invalid email format.", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
-    @NotBlank(message = "Email is required.")
+    @JsonIgnore
     private String email;
 
     @NotBlank(message = "Password is required.")

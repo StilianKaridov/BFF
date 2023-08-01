@@ -1,18 +1,19 @@
 package com.tinqin.bff.rest.handler;
 
 import com.tinqin.bff.core.exception.ExistingPhoneNumberException;
+import com.tinqin.bff.core.exception.NoSuchItemException;
 import com.tinqin.bff.core.exception.NoSuchUserException;
+import com.tinqin.bff.core.exception.NotEnoughQuantityException;
+import com.tinqin.bff.core.exception.EmptyUserCartException;
 import com.tinqin.bff.core.exception.UserExistsException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -58,6 +59,21 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = NoSuchUserException.class)
     public ResponseEntity<String> handlerNoSuchUserException(NoSuchUserException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = NoSuchItemException.class)
+    public ResponseEntity<String> handlerNoSuchItemException(NoSuchItemException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = NotEnoughQuantityException.class)
+    public ResponseEntity<String> handlerNotEnoughQuantityException(NotEnoughQuantityException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = EmptyUserCartException.class)
+    public ResponseEntity<String> handlerEmptyUserCartException(EmptyUserCartException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 

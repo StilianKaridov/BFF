@@ -44,10 +44,4 @@ public class AppConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public LogoutHandler logoutHandler() {
-        return new SecurityContextLogoutHandler();
-    }
-
 }

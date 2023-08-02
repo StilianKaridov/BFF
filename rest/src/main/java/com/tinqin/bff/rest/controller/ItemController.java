@@ -5,8 +5,11 @@ import com.tinqin.bff.api.operations.item.getbyid.ItemRequest;
 import com.tinqin.bff.api.operations.item.getbyid.ItemResponse;
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagOperation;
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagRequest;
-import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuantityDataResponse;
+import com.tinqin.bff.api.operations.item.getbytag.ItemWithPriceAndQuantityDataResponse;
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuantityResponse;
+import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleRequest;
+import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleResponse;
+import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByTitleOperation;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +30,19 @@ public class ItemController {
 
     private final ItemGetByIdOperation itemGetByIdOperation;
     private final ItemGetByTagOperation itemGetByTagOperation;
+    private final ItemGetByTitleOperation itemGetByTitleOperation;
 
     @Autowired
-    public ItemController(ItemGetByIdOperation itemGetByIdOperation, ItemGetByTagOperation itemGetByTagOperation) {
+    public ItemController(ItemGetByIdOperation itemGetByIdOperation, ItemGetByTagOperation itemGetByTagOperation, ItemGetByTitleOperation itemGetByTitleOperation) {
         this.itemGetByIdOperation = itemGetByIdOperation;
         this.itemGetByTagOperation = itemGetByTagOperation;
+        this.itemGetByTitleOperation = itemGetByTitleOperation;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ItemGetByTagWithPriceAndQuantityDataResponse>> getItemsByTag(
+    @GetMapping("/byTag")
+    public ResponseEntity<Page<ItemWithPriceAndQuantityDataResponse>> getItemsByTag(
             @RequestParam @NotBlank(message = "Title is required.") String title,
-            @RequestParam @Min(value = 1, message = "Page number must be positive number.") Integer pageNumber,
+            @RequestParam @Min(value = 0, message = "Page number must be greater than or equal to zero.") Integer pageNumber,
             @RequestParam @Min(value = 1, message = "Page size must be positive number.") Integer pageSize
     ) {
 
@@ -49,6 +54,25 @@ public class ItemController {
                 .build();
 
         ItemGetByTagWithPriceAndQuantityResponse response = this.itemGetByTagOperation.process(itemRequest);
+
+        return ResponseEntity.ok(new PageImpl<>(response.getItems()));
+    }
+
+    @GetMapping("/byItem")
+    public ResponseEntity<Page<ItemWithPriceAndQuantityDataResponse>> getItemsByTitle(
+            @RequestParam @NotBlank(message = "Title is required.") String title,
+            @RequestParam @Min(value = 0, message = "Page number must be greater than or equal to zero.") Integer pageNumber,
+            @RequestParam @Min(value = 1, message = "Page size must be positive number.") Integer pageSize
+    ) {
+
+        ItemGetByItemTitleRequest itemRequest = ItemGetByItemTitleRequest
+                .builder()
+                .title(title)
+                .pageNumber(pageNumber)
+                .pageSize(pageSize)
+                .build();
+
+        ItemGetByItemTitleResponse response = this.itemGetByTitleOperation.process(itemRequest);
 
         return ResponseEntity.ok(new PageImpl<>(response.getItems()));
     }

@@ -24,9 +24,9 @@
 
     <properties>
         <java.version>17</java.version>
-        <revision>0.0.1-SNAPSHOT</revision>
+        <revision>0.0.2-SNAPSHOT</revision>
         <storage.revision>0.0.3-SNAPSHOT</storage.revision>
-        <zoostore.revision>0.0.3-SNAPSHOT</zoostore.revision>
+        <zoostore.revision>0.0.4-SNAPSHOT</zoostore.revision>
         <jjwt.revision>0.11.5</jjwt.revision>
     </properties>
 

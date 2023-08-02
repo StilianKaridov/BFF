@@ -11,20 +11,6 @@
 
     <artifactId>domain</artifactId>
 
-    <repositories>
-        <repository>
-            <id>storage-id</id>
-            <name>storage-repo</name>
-            <url>file://C:/Users/${user.name}/.m2/repository/com/tinqin/storage</url>
-        </repository>
-
-        <repository>
-            <id>zoo-id</id>
-            <name>zoo-repo</name>
-            <url>file://C:/Users/${user.name}/.m2/repository/com/tinqin/zoostore</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.tinqin.storage</groupId>

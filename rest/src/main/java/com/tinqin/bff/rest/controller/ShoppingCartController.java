@@ -9,11 +9,15 @@ import com.tinqin.bff.api.operations.cart.delete.CartDeleteResponse;
 import com.tinqin.bff.api.operations.cart.deleteitem.CartDeleteByItemOperation;
 import com.tinqin.bff.api.operations.cart.deleteitem.CartDeleteByItemRequest;
 import com.tinqin.bff.api.operations.cart.deleteitem.CartDeleteByItemResponse;
+import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewOperation;
+import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewRequest;
+import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +32,28 @@ public class ShoppingCartController {
     private final CartAddOperation cartAddOperation;
     private final CartDeleteOperation cartDeleteOperation;
     private final CartDeleteByItemOperation cartDeleteByItemOperation;
+    private final CartDetailedViewOperation cartDetailedViewOperation;
 
     @Autowired
-    public ShoppingCartController(CartAddOperation cartAddOperation, CartDeleteOperation cartDeleteOperation, CartDeleteByItemOperation cartDeleteByItemOperation) {
+    public ShoppingCartController(CartAddOperation cartAddOperation, CartDeleteOperation cartDeleteOperation, CartDeleteByItemOperation cartDeleteByItemOperation, CartDetailedViewOperation cartDetailedViewOperation) {
         this.cartAddOperation = cartAddOperation;
         this.cartDeleteOperation = cartDeleteOperation;
         this.cartDeleteByItemOperation = cartDeleteByItemOperation;
+        this.cartDetailedViewOperation = cartDetailedViewOperation;
+    }
+
+    @GetMapping
+    public ResponseEntity<CartDetailedViewResponse> detailedInformation(
+            Principal principal
+    ) {
+        CartDetailedViewRequest userCart = CartDetailedViewRequest
+                .builder()
+                .email(principal.getName())
+                .build();
+
+        CartDetailedViewResponse response = this.cartDetailedViewOperation.process(userCart);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping

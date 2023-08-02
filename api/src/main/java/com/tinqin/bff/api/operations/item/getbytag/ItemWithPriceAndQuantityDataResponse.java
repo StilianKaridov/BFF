@@ -19,7 +19,7 @@ import java.util.Set;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @Builder
-public class ItemGetByTagWithPriceAndQuantityDataResponse implements OperationResponse {
+public class ItemWithPriceAndQuantityDataResponse implements OperationResponse {
 
     private String id;
 

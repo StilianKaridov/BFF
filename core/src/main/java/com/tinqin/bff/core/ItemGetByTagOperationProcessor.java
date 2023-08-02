@@ -2,14 +2,14 @@ package com.tinqin.bff.core;
 
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagOperation;
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagRequest;
-import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuantityDataResponse;
+import com.tinqin.bff.api.operations.item.getbytag.ItemWithPriceAndQuantityDataResponse;
 import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuantityResponse;
 import com.tinqin.storage.api.operations.get.ItemGetByIdResponse;
 import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsRequest;
 import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsResponse;
 import com.tinqin.storage.restexport.StorageRestClient;
-import com.tinqin.zoostore.api.operations.item.getbytag.ItemGetByTagDataResponse;
 import com.tinqin.zoostore.api.operations.item.getbytag.ItemGetByTagResponse;
+import com.tinqin.zoostore.api.operations.item.getbytag.ItemGetDataResponse;
 import com.tinqin.zoostore.restexport.ZooStoreRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class ItemGetByTagOperationProcessor implements ItemGetByTagOperation {
         List<String> itemIds = itemsFromZooStore
                 .getItems()
                 .stream()
-                .map(ItemGetByTagDataResponse::getId)
+                .map(ItemGetDataResponse::getId)
                 .toList();
 
         ItemGetListByIdsRequest requestToStorage = ItemGetListByIdsRequest
@@ -46,9 +46,9 @@ public class ItemGetByTagOperationProcessor implements ItemGetByTagOperation {
 
         ItemGetListByIdsResponse itemsFromStorage = this.storageRestClient.getCollectionOfItemsById(requestToStorage);
 
-        List<ItemGetByTagWithPriceAndQuantityDataResponse> mappedItems = new ArrayList<>();
+        List<ItemWithPriceAndQuantityDataResponse> mappedItems = new ArrayList<>();
 
-        for (ItemGetByTagDataResponse itemFromZooStore : itemsFromZooStore.getItems()) {
+        for (ItemGetDataResponse itemFromZooStore : itemsFromZooStore.getItems()) {
             itemsFromStorage
                     .getItems()
                     .stream()
@@ -67,11 +67,11 @@ public class ItemGetByTagOperationProcessor implements ItemGetByTagOperation {
                 .build();
     }
 
-    private ItemGetByTagWithPriceAndQuantityDataResponse mapToItemFromStorageAndZooStoreData(
-            ItemGetByTagDataResponse zooStoreItem,
+    private ItemWithPriceAndQuantityDataResponse mapToItemFromStorageAndZooStoreData(
+            ItemGetDataResponse zooStoreItem,
             ItemGetByIdResponse storageItem
     ) {
-        return ItemGetByTagWithPriceAndQuantityDataResponse
+        return ItemWithPriceAndQuantityDataResponse
                 .builder()
                 .id(zooStoreItem.getId())
                 .title(zooStoreItem.getTitle())

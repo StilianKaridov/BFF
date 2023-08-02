@@ -17,5 +17,5 @@ import java.util.List;
 @Builder
 public class ItemGetByTagWithPriceAndQuantityResponse implements OperationResponse {
 
-    private List<ItemGetByTagWithPriceAndQuantityDataResponse> items;
+    private List<ItemWithPriceAndQuantityDataResponse> items;
 }

@@ -13,6 +13,12 @@
   </licenses>
   <dependencies>
     <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>com.tinqin.zoostore</groupId>
       <artifactId>api</artifactId>
       <version>0.0.3-SNAPSHOT</version>

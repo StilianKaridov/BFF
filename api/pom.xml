@@ -7,17 +7,21 @@
         <groupId>com.tinqin.bff</groupId>
         <version>${revision}</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>api</artifactId>
+
     <dependencies>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.tinqin.zoostore</groupId>
             <artifactId>api</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${zoostore.revision}</version>
         </dependency>
     </dependencies>
-
 
 </project>

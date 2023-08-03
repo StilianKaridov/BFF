@@ -12,6 +12,9 @@ import com.tinqin.bff.api.operations.cart.deleteitem.CartDeleteByItemResponse;
 import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewOperation;
 import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewRequest;
 import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewResponse;
+import com.tinqin.bff.api.operations.cart.sell.CartSellOperation;
+import com.tinqin.bff.api.operations.cart.sell.CartSellRequest;
+import com.tinqin.bff.api.operations.cart.sell.CartSellResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +36,15 @@ public class ShoppingCartController {
     private final CartDeleteOperation cartDeleteOperation;
     private final CartDeleteByItemOperation cartDeleteByItemOperation;
     private final CartDetailedViewOperation cartDetailedViewOperation;
+    private final CartSellOperation cartSellOperation;
 
     @Autowired
-    public ShoppingCartController(CartAddOperation cartAddOperation, CartDeleteOperation cartDeleteOperation, CartDeleteByItemOperation cartDeleteByItemOperation, CartDetailedViewOperation cartDetailedViewOperation) {
+    public ShoppingCartController(CartAddOperation cartAddOperation, CartDeleteOperation cartDeleteOperation, CartDeleteByItemOperation cartDeleteByItemOperation, CartDetailedViewOperation cartDetailedViewOperation, CartSellOperation cartSellOperation) {
         this.cartAddOperation = cartAddOperation;
         this.cartDeleteOperation = cartDeleteOperation;
         this.cartDeleteByItemOperation = cartDeleteByItemOperation;
         this.cartDetailedViewOperation = cartDetailedViewOperation;
+        this.cartSellOperation = cartSellOperation;
     }
 
     @GetMapping
@@ -86,6 +91,20 @@ public class ShoppingCartController {
                 .build();
 
         CartDeleteByItemResponse response = this.cartDeleteByItemOperation.process(requestWithUser);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Transactional
+    @DeleteMapping("/sell")
+    public ResponseEntity<CartSellResponse> sellUserCart(Principal principal) {
+        CartSellRequest request = CartSellRequest
+                .builder()
+                .creditCardNumber("12345")
+                .email(principal.getName())
+                .build();
+
+        CartSellResponse response = this.cartSellOperation.process(request);
 
         return ResponseEntity.ok(response);
     }

@@ -68,7 +68,7 @@ public class CartAddOperationProcessor implements CartAddOperation {
             ShoppingCart existing = itemFromShoppingCart.get();
 
             if (existing.getQuantity() + quantityFromInput > itemFromZooAndStorage.getQuantity()) {
-                throw new NotEnoughQuantityException();
+                throw new NotEnoughQuantityException("Not enough quantity!");
             }
 
             int newQuantity = existing.getQuantity() + quantityFromInput;
@@ -95,7 +95,7 @@ public class CartAddOperationProcessor implements CartAddOperation {
         }
 
         if (quantityFromInput > itemFromZooAndStorage.getQuantity()) {
-            throw new NotEnoughQuantityException();
+            throw new NotEnoughQuantityException("Not enough quantity!");
         }
 
         BigDecimal price = itemFromZooAndStorage.getPrice().multiply(BigDecimal.valueOf(quantityFromInput));

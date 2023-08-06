@@ -4,6 +4,7 @@ import com.tinqin.bff.api.operations.item.getbytag.ItemWithPriceAndQuantityDataR
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleRequest;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleResponse;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByTitleOperation;
+import com.tinqin.bff.core.exception.NoSuchItemException;
 import com.tinqin.storage.api.operations.get.ItemGetByIdResponse;
 import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsRequest;
 import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsResponse;
@@ -11,11 +12,13 @@ import com.tinqin.storage.restexport.StorageRestClient;
 import com.tinqin.zoostore.api.operations.item.getbytag.ItemGetDataResponse;
 import com.tinqin.zoostore.api.operations.item.getbytitle.ItemGetByTitleResponse;
 import com.tinqin.zoostore.restexport.ZooStoreRestClient;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemGetByTitleOperationProcessor implements ItemGetByTitleOperation {
@@ -39,18 +42,21 @@ public class ItemGetByTitleOperationProcessor implements ItemGetByTitleOperation
                 .map(ItemGetDataResponse::getId)
                 .toList();
 
-        ItemGetListByIdsRequest requestToStorage = ItemGetListByIdsRequest
-                .builder()
-                .ids(itemIds)
-                .build();
+        List<ItemGetByIdResponse> itemsFromStorage;
 
-        ItemGetListByIdsResponse itemsFromStorage = this.storageRestClient.getCollectionOfItemsById(requestToStorage);
+        try{
+            itemsFromStorage = itemIds
+                    .parallelStream()
+                    .map(storageRestClient::getItemById)
+                    .toList();
+        } catch (FeignException ex) {
+            throw new NoSuchItemException();
+        }
 
         List<ItemWithPriceAndQuantityDataResponse> mappedItems = new ArrayList<>();
 
         for (ItemGetDataResponse itemFromZooStore : itemsFromZooStore.getItems()) {
             itemsFromStorage
-                    .getItems()
                     .stream()
                     .filter(
                             itemFromStorage -> itemFromStorage

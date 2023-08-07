@@ -17,13 +17,11 @@ public class UserRegisterOperationProcessor implements UserRegisterOperation {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
 
     @Autowired
-    public UserRegisterOperationProcessor(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserRegisterOperationProcessor(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
     }
 
     @Override
@@ -60,15 +58,12 @@ public class UserRegisterOperationProcessor implements UserRegisterOperation {
 
         this.userRepository.save(user);
 
-        String token = this.jwtService.generateToken(user);
-
         return UserRegisterResponse
                 .builder()
                 .email(email)
                 .firstName(firstName)
                 .lastName(lastName)
                 .phoneNumber(phoneNumber)
-                .token(token)
                 .build();
     }
 }

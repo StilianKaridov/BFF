@@ -22,6 +22,4 @@ public class UserRegisterResponse implements OperationResponse {
     private String email;
 
     private String phoneNumber;
-
-    private String token;
 }

@@ -4,6 +4,8 @@ import com.tinqin.bff.persistence.entity.ShoppingCart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,4 +20,6 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, UUID
     Optional<ShoppingCart> findByUserId(UUID userId);
 
     void deleteAllByUserId(UUID userId);
+
+    void deleteAllByAddedOnBefore(Timestamp oneWeekAgo);
 }

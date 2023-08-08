@@ -12,8 +12,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,4 +42,7 @@ public class ShoppingCart {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @CreationTimestamp
+    private Timestamp addedOn;
 }

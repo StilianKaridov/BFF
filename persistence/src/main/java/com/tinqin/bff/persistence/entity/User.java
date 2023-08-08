@@ -15,10 +15,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -50,6 +52,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false, unique = true)
     private String phoneNumber;
+
+    @CreationTimestamp
+    private Timestamp registeredOn;
 
     @Enumerated(EnumType.STRING)
     private Role role;

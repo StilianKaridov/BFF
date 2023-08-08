@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,4 +20,6 @@ import java.util.List;
 public class CartSellResponse implements OperationResponse {
 
     private List<ItemSellDataResponse> boughtItems;
+
+    private BigDecimal totalPrice;
 }

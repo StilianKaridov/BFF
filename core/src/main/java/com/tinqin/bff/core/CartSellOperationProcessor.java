@@ -3,6 +3,7 @@ package com.tinqin.bff.core;
 import com.tinqin.bff.api.operations.cart.sell.CartSellOperation;
 import com.tinqin.bff.api.operations.cart.sell.CartSellRequest;
 import com.tinqin.bff.api.operations.cart.sell.CartSellResponse;
+import com.tinqin.bff.core.exception.EmptyUserCartException;
 import com.tinqin.bff.core.exception.NoSuchUserException;
 import com.tinqin.bff.core.exception.NotEnoughQuantityException;
 import com.tinqin.bff.persistence.entity.ShoppingCart;
@@ -42,8 +43,11 @@ public class CartSellOperationProcessor implements CartSellOperation {
     public CartSellResponse process(CartSellRequest input) {
         User user = this.userRepository.findByEmail(input.getEmail())
                 .orElseThrow(NoSuchUserException::new);
-
         UUID userId = user.getId();
+
+        List<ShoppingCart> allUserItems = this.shoppingCartRepository.findAllByUserId(userId);
+
+        if(allUserItems.isEmpty()) throw new EmptyUserCartException();
 
         LocalDateTime oneWeekAfterRegistration = user.getRegisteredOn().toLocalDateTime().plusDays(7);
         LocalDateTime currentTime = LocalDateTime.now();
@@ -56,7 +60,7 @@ public class CartSellOperationProcessor implements CartSellOperation {
         BigDecimal totalPrice = BigDecimal.ZERO;
 
         List<ItemSellDataResponse> items = new ArrayList<>();
-        for (ShoppingCart item : this.shoppingCartRepository.findAllByUserId(userId)) {
+        for (ShoppingCart item : allUserItems) {
             BigDecimal price = item.getPrice();
             BigDecimal priceWithDiscount = price.multiply(BigDecimal.valueOf(discount));
 

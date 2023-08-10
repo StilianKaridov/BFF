@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.jwtservice;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

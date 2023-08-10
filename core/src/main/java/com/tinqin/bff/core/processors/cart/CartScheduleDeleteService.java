@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.cart;
 
 import com.tinqin.bff.persistence.repository.ShoppingCartRepository;
 import jakarta.transaction.Transactional;

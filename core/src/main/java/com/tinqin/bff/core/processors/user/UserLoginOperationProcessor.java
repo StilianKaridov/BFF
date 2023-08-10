@@ -1,8 +1,9 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.user;
 
 import com.tinqin.bff.api.operations.user.login.UserLoginOperation;
 import com.tinqin.bff.api.operations.user.login.UserLoginRequest;
 import com.tinqin.bff.api.operations.user.login.UserLoginResponse;
+import com.tinqin.bff.core.jwtservice.JwtService;
 import com.tinqin.bff.persistence.entity.User;
 import com.tinqin.bff.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

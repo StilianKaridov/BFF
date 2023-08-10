@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.cart;
 
 import com.tinqin.bff.api.operations.cart.add.CartAddOperation;
 import com.tinqin.bff.api.operations.cart.add.CartAddRequest;

@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.user;
 
 import com.tinqin.bff.api.operations.user.changepassword.UserChangePasswordOperation;
 import com.tinqin.bff.api.operations.user.changepassword.UserChangePasswordRequest;

@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.item;
 
 import com.tinqin.bff.api.operations.item.getbyid.ItemGetByIdOperation;
 import com.tinqin.bff.api.operations.item.getbyid.ItemRequest;

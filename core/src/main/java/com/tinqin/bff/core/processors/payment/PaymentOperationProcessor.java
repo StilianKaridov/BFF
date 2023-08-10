@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.payment;
 
 import com.tinqin.bff.api.operations.payment.PaymentOperation;
 import com.tinqin.bff.api.operations.payment.PaymentRequest;

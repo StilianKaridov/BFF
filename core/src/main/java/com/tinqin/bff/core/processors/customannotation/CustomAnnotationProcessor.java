@@ -1,4 +1,4 @@
-package com.tinqin.bff.core;
+package com.tinqin.bff.core.processors.customannotation;
 
 import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
 import jakarta.annotation.PostConstruct;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 

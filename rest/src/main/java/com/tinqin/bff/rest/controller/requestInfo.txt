@@ -1,0 +1,5 @@
+GET /api/bff/items/byTag
+GET /api/bff/cart
+POST /api/bff/cart
+POST /api/bff/users/login
+PUT /api/bff/users/changePassword

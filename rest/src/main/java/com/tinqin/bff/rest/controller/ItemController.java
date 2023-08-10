@@ -10,6 +10,7 @@ import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuant
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleRequest;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleResponse;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByTitleOperation;
+import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class ItemController {
         this.itemGetByTitleOperation = itemGetByTitleOperation;
     }
 
+    @RequestInfoToTextFile
     @GetMapping("/byTag")
     public ResponseEntity<Page<ItemWithPriceAndQuantityDataResponse>> getItemsByTag(
             @RequestParam @NotBlank(message = "Title is required.") String title,

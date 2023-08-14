@@ -6,8 +6,10 @@ import com.tinqin.bff.core.exception.RequestMappingMethodNotFound;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,7 +32,7 @@ public class CustomAnnotationProcessor {
         File[] files = controllersDirectory.listFiles();
         if (files != null) {
             Arrays.stream(files)
-                    .filter(this::checkIfFileIsValid)
+                    .filter(this::checkIfFileIsController)
                     .forEach(file -> {
                         String className = file.getName().replace(".java", "");
                         Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
@@ -147,7 +149,11 @@ public class CustomAnnotationProcessor {
                 annotation.annotationType().getSimpleName().endsWith("RequestLine");
     }
 
-    private boolean checkIfFileIsValid(File file) {
-        return file.isFile() && file.getName().endsWith("Controller.java");
+    private boolean checkIfFileIsController(File file) {
+        String className = file.getName().replace(".java", "");
+        Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
+        boolean isFileAController = clazz.isAnnotationPresent(RestController.class) || clazz.isAnnotationPresent(Controller.class);
+
+        return file.isFile() && isFileAController;
     }
 }

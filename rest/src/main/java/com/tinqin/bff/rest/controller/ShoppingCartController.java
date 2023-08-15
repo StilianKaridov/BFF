@@ -15,7 +15,7 @@ import com.tinqin.bff.api.operations.cart.getdetailedview.CartDetailedViewRespon
 import com.tinqin.bff.api.operations.cart.sell.CartSellOperation;
 import com.tinqin.bff.api.operations.cart.sell.CartSellRequest;
 import com.tinqin.bff.api.operations.cart.sell.CartSellResponse;
-import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
+import com.tinqin.bff.core.annotations.GenerateRestExport;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class ShoppingCartController {
         this.cartSellOperation = cartSellOperation;
     }
 
-    @RequestInfoToTextFile
+    @GenerateRestExport
     @GetMapping
     public ResponseEntity<CartDetailedViewResponse> detailedInformation(
             Principal principal
@@ -63,7 +63,7 @@ public class ShoppingCartController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestInfoToTextFile
+    @GenerateRestExport
     @PostMapping
     public ResponseEntity<CartAddResponse> addItemToCart(
             @RequestBody @Valid CartAddRequest cartAddRequest,

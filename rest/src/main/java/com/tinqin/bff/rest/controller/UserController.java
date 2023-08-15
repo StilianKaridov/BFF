@@ -9,7 +9,7 @@ import com.tinqin.bff.api.operations.user.login.UserLoginResponse;
 import com.tinqin.bff.api.operations.user.register.UserRegisterOperation;
 import com.tinqin.bff.api.operations.user.register.UserRegisterRequest;
 import com.tinqin.bff.api.operations.user.register.UserRegisterResponse;
-import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
+import com.tinqin.bff.core.annotations.GenerateRestExport;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.status(201).body(registeredUserResponse);
     }
 
-    @RequestInfoToTextFile
+    @GenerateRestExport
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(
             @RequestBody @Valid UserLoginRequest userLoginRequest
@@ -55,7 +55,7 @@ public class UserController {
         return ResponseEntity.ok(loggedInUserResponse);
     }
 
-    @RequestInfoToTextFile
+    @GenerateRestExport
     @PutMapping("/changePassword")
     public ResponseEntity<UserChangePasswordResponse> changePassword(
             @RequestBody @Valid UserChangePasswordRequest userChangePasswordRequest,

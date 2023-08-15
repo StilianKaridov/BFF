@@ -1,19 +1,34 @@
 package com.tinqin.bff.core.processors.customannotation;
 
-import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
+import com.helger.jcodemodel.EClassType;
+import com.helger.jcodemodel.JClassAlreadyExistsException;
+import com.helger.jcodemodel.JCodeModel;
+import com.helger.jcodemodel.JDefinedClass;
+import com.helger.jcodemodel.JMethod;
+import com.helger.jcodemodel.JMod;
+import com.helger.jcodemodel.JPackage;
+import com.tinqin.bff.core.annotations.GenerateRestExport;
+import com.tinqin.bff.core.exception.ClassBuilderException;
+import com.tinqin.bff.core.exception.ClassCreationException;
 import com.tinqin.bff.core.exception.InvalidRequestLineException;
 import com.tinqin.bff.core.exception.RequestMappingMethodNotFound;
+import feign.Headers;
+import feign.Param;
+import feign.RequestLine;
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,64 +37,118 @@ public class CustomAnnotationProcessor {
 
     private static final String CONTROLLERS_DIRECTORY_PATH = "rest/src/main/java/com/tinqin/bff/rest/controller";
     private static final String SPECIFIC_CONTROLLER_PATH = "com.tinqin.bff.rest.controller.";
-    private static final String FILE_WITH_ANNOTATED_METHODS_PATH = CONTROLLERS_DIRECTORY_PATH + "/requestInfo.txt";
+    private static final String REST_EXPORT_PATH = "restexport/src/main/java";
 
+    @SneakyThrows
     @PostConstruct
     public void init() {
-        StringBuilder sb = new StringBuilder();
+        JCodeModel codeModel = new JCodeModel();
+        JDefinedClass jc = createInterface(codeModel);
 
         File controllersDirectory = new File(CONTROLLERS_DIRECTORY_PATH);
         File[] files = controllersDirectory.listFiles();
         if (files != null) {
-            Arrays.stream(files)
-                    .filter(this::checkIfFileIsController)
-                    .forEach(file -> {
-                        String className = file.getName().replace(".java", "");
-                        Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
+            createClassObjectIfFileIsController(files, jc);
 
-                        RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
-                        String requestMappingPath = requestMapping != null ? requestMapping.value()[0] : "";
-
-                        Arrays.stream(clazz.getDeclaredMethods())
-                                .filter(method -> method.isAnnotationPresent(RequestInfoToTextFile.class))
-                                .forEach(method -> Arrays.stream(method.getDeclaredAnnotations())
-                                        .filter(this::checkIfAnnotationNameIsValid)
-                                        .forEach(annotation ->
-                                                this.appendAnnotationValue(sb, annotation, requestMappingPath)
-                                        )
-                                );
-                    });
-            writeToFile(sb);
+            try {
+                codeModel.build(new File(REST_EXPORT_PATH));
+            } catch (IOException e) {
+                throw new ClassBuilderException(e.getMessage());
+            }
         }
     }
 
-    @SneakyThrows
-    private String getValueFromRequestMapping(Annotation annotation, String requestMappingPath) {
-        String[] annotationValues = performMethodInvoke(annotation, "value");
-        String specificMappingPath = annotationValues.length != 0 ? annotationValues[0] : "";
+    private void createClassObjectIfFileIsController(File[] files, JDefinedClass jc) {
+        Arrays.stream(files)
+                .filter(this::checkIfFileIsController)
+                .forEach(file -> {
+                    String className = file.getName().replace(".java", "");
+                    Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
 
-        RequestMethod[] annotationMethod = (RequestMethod[]) annotation
-                .annotationType()
-                .getMethod("method")
-                .invoke(annotation);
+                    RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
+                    String requestMappingPath = requestMapping != null ? requestMapping.value()[0] : "";
 
-        if (annotationMethod.length == 0) {
-            throw new RequestMappingMethodNotFound();
-        }
-        RequestMethod requestType = annotationMethod[0];
-        return buildStringBuilder(requestType.toString(), requestMappingPath, specificMappingPath);
+                    createMethodIfAnnotationPresent(clazz, jc, requestMappingPath);
+                });
     }
 
     @SneakyThrows
-    private String getValueFromSpecificMapping(Annotation annotation, String requestMappingPath) {
-        String[] annotationValues = performMethodInvoke(annotation, "value");
-        String specificMappingPath = annotationValues.length != 0 ? annotationValues[0] : "";
-        String requestType = annotation
-                .annotationType()
-                .getSimpleName()
-                .replace("Mapping", "")
-                .toUpperCase();
-        return buildStringBuilder(requestType, requestMappingPath, specificMappingPath);
+    private static JDefinedClass createInterface(JCodeModel codeModel) {
+        JPackage jp = codeModel._package("com.tinqin.bff.restexport");
+        JDefinedClass jc;
+        try {
+            jc = jp._class(JMod.PUBLIC, "BffRestClient", EClassType.INTERFACE);
+        } catch (JClassAlreadyExistsException e) {
+            throw new ClassCreationException(e.getMessage());
+        }
+        jc.annotate(Headers.class)
+                .paramArray("value", "Content-Type: application/json");
+        return jc;
+    }
+
+    private boolean checkIfFileIsController(File file) {
+        String className = file.getName().replace(".java", "");
+        Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
+        boolean isFileAController = clazz.isAnnotationPresent(RestController.class) || clazz.isAnnotationPresent(Controller.class);
+
+        return file.isFile() && isFileAController;
+    }
+
+    @SneakyThrows
+    private Class<?> getClassObjectFromClassName(String className) {
+        return Class.forName(className);
+    }
+
+    private void createMethodIfAnnotationPresent(
+            Class<?> clazz,
+            JDefinedClass jc,
+            String requestMappingPath
+    ) {
+        Arrays.stream(clazz.getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(GenerateRestExport.class))
+                .forEach(method -> {
+                    constructMethod(method, jc, requestMappingPath);
+                });
+    }
+
+    private void constructMethod(
+            Method method,
+            JDefinedClass jc,
+            String requestMappingPath
+    ) {
+        StringBuilder sb = new StringBuilder();
+        Class<?> methodReturnType = (Class<?>) ((ParameterizedType) method
+                .getGenericReturnType())
+                .getActualTypeArguments()[0];
+
+        String methodName = method.getName();
+        JMethod methodForRestExport = jc.method(JMod.NONE, methodReturnType, methodName);
+
+        Arrays.stream(method.getDeclaredAnnotations())
+                .filter(this::checkIfAnnotationNameIsValid)
+                .forEach(annotation -> {
+                            appendAnnotationValue(sb, annotation, requestMappingPath);
+                            addRequestLineAnnotationAndParametersToMethod(method, methodForRestExport, sb);
+                        }
+                );
+    }
+
+    private boolean checkIfAnnotationNameIsValid(Annotation annotation) {
+        return annotation.annotationType().getSimpleName().endsWith("Mapping") ||
+                annotation.annotationType().getSimpleName().endsWith("RequestLine");
+    }
+
+    private void appendAnnotationValue(
+            StringBuilder sb,
+            Annotation annotation,
+            String requestMappingPath
+    ) {
+        String annotationName = annotation.annotationType().getSimpleName();
+        switch (annotationName) {
+            case "RequestLine" -> sb.append(getValueFromRequestLine(annotation, requestMappingPath));
+            case "RequestMapping" -> sb.append(getValueFromRequestMapping(annotation, requestMappingPath));
+            default -> sb.append(getValueFromSpecificMapping(annotation, requestMappingPath));
+        }
     }
 
     @SneakyThrows
@@ -105,16 +174,44 @@ public class CustomAnnotationProcessor {
     }
 
     @SneakyThrows
-    private Class<?> getClassObjectFromClassName(String className) {
-        return Class.forName(className);
+    private String getValueFromRequestMapping(Annotation annotation, String requestMappingPath) {
+        String[] annotationValues = performMethodInvoke(annotation, "value");
+        String specificMappingPath = annotationValues.length != 0 ? annotationValues[0] : "";
+
+        RequestMethod[] annotationMethod = (RequestMethod[]) annotation
+                .annotationType()
+                .getMethod("method")
+                .invoke(annotation);
+
+        if (annotationMethod.length == 0) {
+            throw new RequestMappingMethodNotFound();
+        }
+        RequestMethod requestType = annotationMethod[0];
+        return buildStringBuilder(requestType.toString(), requestMappingPath, specificMappingPath);
     }
 
-    @SneakyThrows
-    private void writeToFile(StringBuilder sb) {
-        File allAnnotatedMethods = new File(FILE_WITH_ANNOTATED_METHODS_PATH);
-        FileWriter fileWriter = new FileWriter(allAnnotatedMethods);
-        fileWriter.write(sb.toString().trim());
-        fileWriter.close();
+    private String getValueFromSpecificMapping(Annotation annotation, String requestMappingPath) {
+        String[] annotationValues = performMethodInvoke(annotation, "value");
+        String specificMappingPath = annotationValues.length != 0 ? annotationValues[0] : "";
+        String requestType = annotation
+                .annotationType()
+                .getSimpleName()
+                .replace("Mapping", "")
+                .toUpperCase();
+        return buildStringBuilder(requestType, requestMappingPath, specificMappingPath);
+    }
+
+    private String buildStringBuilder(
+            String requestType,
+            String requestMappingPath,
+            String specificMappingPath
+    ) {
+        return new StringBuilder()
+                .append(requestType)
+                .append(" ")
+                .append(requestMappingPath)
+                .append(specificMappingPath)
+                .toString();
     }
 
     @SneakyThrows
@@ -125,35 +222,29 @@ public class CustomAnnotationProcessor {
                 .invoke(annotation);
     }
 
-    private String buildStringBuilder(String requestType, String requestMappingPath, String specificMappingPath) {
-        return new StringBuilder()
-                .append(requestType)
-                .append(" ")
-                .append(requestMappingPath)
-                .append(specificMappingPath)
-                .append("\n")
-                .toString();
-    }
+    private void addRequestLineAnnotationAndParametersToMethod(
+            Method method,
+            JMethod methodForRestExport,
+            StringBuilder sb
+    ) {
+        Arrays.stream(method.getParameters())
+                .forEach(parameter -> {
+                    Class<?> type = parameter.getType();
+                    String name = parameter.getName();
+                    methodForRestExport.param(type, name).annotate(Param.class);
 
-    private void appendAnnotationValue(StringBuilder sb, Annotation annotation, String requestMappingPath) {
-        String annotationName = annotation.annotationType().getSimpleName();
-        switch (annotationName) {
-            case "RequestLine" -> sb.append(getValueFromRequestLine(annotation, requestMappingPath));
-            case "RequestMapping" -> sb.append(getValueFromRequestMapping(annotation, requestMappingPath));
-            default -> sb.append(getValueFromSpecificMapping(annotation, requestMappingPath));
-        }
-    }
+                    if (parameter.isAnnotationPresent(RequestParam.class)) {
+                        if (sb.indexOf("?") == -1) {
+                            sb.append("?");
+                        } else {
+                            sb.append("&");
+                        }
+                        sb.append(name).append("={").append(name).append("}");
+                    }
+                });
 
-    private boolean checkIfAnnotationNameIsValid(Annotation annotation) {
-        return annotation.annotationType().getSimpleName().endsWith("Mapping") ||
-                annotation.annotationType().getSimpleName().endsWith("RequestLine");
-    }
-
-    private boolean checkIfFileIsController(File file) {
-        String className = file.getName().replace(".java", "");
-        Class<?> clazz = getClassObjectFromClassName(SPECIFIC_CONTROLLER_PATH + className);
-        boolean isFileAController = clazz.isAnnotationPresent(RestController.class) || clazz.isAnnotationPresent(Controller.class);
-
-        return file.isFile() && isFileAController;
+        methodForRestExport
+                .annotate(RequestLine.class)
+                .param("value", sb.toString());
     }
 }

@@ -10,6 +10,7 @@
         <module>core</module>
         <module>domain</module>
         <module>persistence</module>
+        <module>restexport</module>
     </modules>
 
     <parent>

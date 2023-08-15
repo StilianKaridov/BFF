@@ -16,6 +16,8 @@ import java.util.List;
 @Setter(AccessLevel.PRIVATE)
 @Builder
 public class ItemGetByTagWithPriceAndQuantityResponse implements OperationResponse {
-
+    private Integer page;
+    private Integer limit;
+    private Long totalItems;
     private List<ItemWithPriceAndQuantityDataResponse> items;
 }

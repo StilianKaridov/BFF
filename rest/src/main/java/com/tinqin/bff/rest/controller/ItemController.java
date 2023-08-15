@@ -10,7 +10,7 @@ import com.tinqin.bff.api.operations.item.getbytag.ItemGetByTagWithPriceAndQuant
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleRequest;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleResponse;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByTitleOperation;
-import com.tinqin.bff.core.annotations.RequestInfoToTextFile;
+import com.tinqin.bff.core.annotations.GenerateRestExport;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +40,9 @@ public class ItemController {
         this.itemGetByTitleOperation = itemGetByTitleOperation;
     }
 
-    @RequestInfoToTextFile
+    @GenerateRestExport
     @GetMapping("/byTag")
-    public ResponseEntity<Page<ItemWithPriceAndQuantityDataResponse>> getItemsByTag(
+    public ResponseEntity<ItemGetByTagWithPriceAndQuantityResponse> getItemsByTag(
             @RequestParam @NotBlank(message = "Title is required.") String title,
             @RequestParam @Min(value = 0, message = "Page number must be greater than or equal to zero.") Integer pageNumber,
             @RequestParam @Min(value = 1, message = "Page size must be positive number.") Integer pageSize
@@ -57,11 +57,11 @@ public class ItemController {
 
         ItemGetByTagWithPriceAndQuantityResponse response = this.itemGetByTagOperation.process(itemRequest);
 
-        return ResponseEntity.ok(new PageImpl<>(response.getItems()));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/byItem")
-    public ResponseEntity<Page<ItemWithPriceAndQuantityDataResponse>> getItemsByTitle(
+    public ResponseEntity<ItemGetByItemTitleResponse> getItemsByTitle(
             @RequestParam @NotBlank(message = "Title is required.") String title,
             @RequestParam @Min(value = 0, message = "Page number must be greater than or equal to zero.") Integer pageNumber,
             @RequestParam @Min(value = 1, message = "Page size must be positive number.") Integer pageSize
@@ -76,9 +76,10 @@ public class ItemController {
 
         ItemGetByItemTitleResponse response = this.itemGetByTitleOperation.process(itemRequest);
 
-        return ResponseEntity.ok(new PageImpl<>(response.getItems()));
+        return ResponseEntity.ok(response);
     }
 
+    @GenerateRestExport
     @GetMapping("/{id}")
     public ResponseEntity<ItemResponse> getItemById(@PathVariable String id) {
         ItemRequest itemRequest = ItemRequest

@@ -63,6 +63,9 @@ public class ItemGetByTagOperationProcessor implements ItemGetByTagOperation {
 
         return ItemGetByTagWithPriceAndQuantityResponse
                 .builder()
+                .limit(itemsFromZooStore.getLimit())
+                .page(itemsFromZooStore.getPage())
+                .totalItems(itemsFromZooStore.getTotalItems())
                 .items(mappedItems)
                 .build();
     }

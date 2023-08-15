@@ -6,8 +6,6 @@ import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByItemTitleResponse;
 import com.tinqin.bff.api.operations.item.getbytitle.ItemGetByTitleOperation;
 import com.tinqin.bff.core.exception.NoSuchItemException;
 import com.tinqin.storage.api.operations.get.ItemGetByIdResponse;
-import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsRequest;
-import com.tinqin.storage.api.operations.getlistofitems.ItemGetListByIdsResponse;
 import com.tinqin.storage.restexport.StorageRestClient;
 import com.tinqin.zoostore.api.operations.item.getbytag.ItemGetDataResponse;
 import com.tinqin.zoostore.api.operations.item.getbytitle.ItemGetByTitleResponse;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ItemGetByTitleOperationProcessor implements ItemGetByTitleOperation {
@@ -44,7 +41,7 @@ public class ItemGetByTitleOperationProcessor implements ItemGetByTitleOperation
 
         List<ItemGetByIdResponse> itemsFromStorage;
 
-        try{
+        try {
             itemsFromStorage = itemIds
                     .parallelStream()
                     .map(storageRestClient::getItemById)
@@ -69,6 +66,9 @@ public class ItemGetByTitleOperationProcessor implements ItemGetByTitleOperation
 
         return ItemGetByItemTitleResponse
                 .builder()
+                .limit(itemsFromZooStore.getLimit())
+                .page(itemsFromZooStore.getPage())
+                .totalItems((long) mappedItems.size())
                 .items(mappedItems)
                 .build();
     }

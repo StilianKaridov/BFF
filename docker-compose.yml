@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+  mysql-server:
+    container_name: mysql-server
+    image: mysql:latest
+    restart: unless-stopped
+#    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=0000
+    volumes:
+      - mysql-server:/var/lib/mysql
+    ports:
+      - "3308:3306"
+
+  zoostore:
+    depends_on:
+      - mysql-server
+    build: ../ZooStore
+    restart: on-failure
+#    env_file: ./.env
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+           "spring.datasource.url"  : "jdbc:mysql://mysql-server:3306/zoostore?useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+           "spring.datasource.username" : "root",
+           "spring.datasource.password" : "0000",
+           "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQLDialect",
+           "spring.jpa.hibernate.ddl-auto" : "update"
+         }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  storage:
+    depends_on:
+      - mysql-server
+      - zoostore
+    build: ../storage
+    restart: on-failure
+#    env_file: ./.env
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+           "spring.datasource.url"  : "jdbc:mysql://mysql-server:3306/storage?useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+           "spring.datasource.username" : "root",
+           "spring.datasource.password" : "0000",
+           "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQLDialect",
+           "spring.jpa.hibernate.ddl-auto" : "update"
+         }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  bff:
+    depends_on:
+      - mysql-server
+      - zoostore
+      - storage
+    build: ../BFF
+    restart: on-failure
+#    env_file: ./.env
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_APPLICATION_JSON: '{
+           "spring.datasource.url"  : "jdbc:mysql://mysql-server:3306/bff?useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true",
+           "spring.datasource.username" : "root",
+           "spring.datasource.password" : "0000",
+           "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQLDialect",
+           "spring.jpa.hibernate.ddl-auto" : "update"
+         }'
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql-server:

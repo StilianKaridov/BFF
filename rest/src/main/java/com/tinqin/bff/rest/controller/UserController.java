@@ -9,7 +9,7 @@ import com.tinqin.bff.api.operations.user.login.UserLoginResponse;
 import com.tinqin.bff.api.operations.user.register.UserRegisterOperation;
 import com.tinqin.bff.api.operations.user.register.UserRegisterRequest;
 import com.tinqin.bff.api.operations.user.register.UserRegisterResponse;
-import com.tinqin.bff.core.annotations.GenerateRestExport;
+import com.tinqin.bff.customannotation.annotation.GenerateRestExport;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

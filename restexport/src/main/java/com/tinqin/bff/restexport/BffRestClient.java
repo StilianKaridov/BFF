@@ -1,4 +1,3 @@
-
 package com.tinqin.bff.restexport;
 
 import java.security.Principal;
@@ -20,41 +19,21 @@ import feign.RequestLine;
 })
 public interface BffRestClient {
 
-    @RequestLine("GET /api/bff/items/{id}")
-    ItemResponse getItemById(
-        @Param
-        String id);
-
-    @RequestLine("GET /api/bff/items/byTag?title={title}&pageNumber={pageNumber}&pageSize={pageSize}")
-    ItemGetByTagWithPriceAndQuantityResponse getItemsByTag(
-        @Param
-        String title,
-        @Param
-        Integer pageNumber,
-        @Param
-        Integer pageSize);
-
-    @RequestLine("GET /api/bff/cart")
-    CartDetailedViewResponse detailedInformation(
-        @Param
-        Principal principal);
-
-    @RequestLine("POST /api/bff/cart")
-    CartAddResponse addItemToCart(
-        @Param
-        CartAddRequest cartAddRequest,
-        @Param
-        Principal principal);
-
     @RequestLine("POST /api/bff/users/login")
-    UserLoginResponse login(
-        @Param
-        UserLoginRequest userLoginRequest);
+    UserLoginResponse login(@Param UserLoginRequest userLoginRequest);
 
     @RequestLine("PUT /api/bff/users/changePassword")
-    UserChangePasswordResponse changePassword(
-        @Param
-        UserChangePasswordRequest userChangePasswordRequest,
-        @Param
-        Principal principal);
+    UserChangePasswordResponse changePassword(@Param UserChangePasswordRequest userChangePasswordRequest, @Param Principal principal);
+
+    @RequestLine("GET /api/bff/cart")
+    CartDetailedViewResponse detailedInformation(@Param Principal principal);
+
+    @RequestLine("POST /api/bff/cart")
+    CartAddResponse addItemToCart(@Param CartAddRequest cartAddRequest, @Param Principal principal);
+
+    @RequestLine("GET /api/bff/items/byTag?title={title}&pageNumber={pageNumber}&pageSize={pageSize}")
+    ItemGetByTagWithPriceAndQuantityResponse getItemsByTag(@Param String title, @Param Integer pageNumber, @Param Integer pageSize);
+
+    @RequestLine("GET /api/bff/items/{id}")
+    ItemResponse getItemById(@Param String id);
 }

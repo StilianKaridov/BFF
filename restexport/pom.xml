@@ -23,5 +23,27 @@
             <artifactId>api</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.tinqin.bff</groupId>
+            <artifactId>annotationprocessor</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <goals>
+                    <goal>compile</goal>
+                </goals>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

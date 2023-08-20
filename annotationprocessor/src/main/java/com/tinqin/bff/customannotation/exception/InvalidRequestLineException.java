@@ -1,6 +1,6 @@
-package com.tinqin.bff.core.exception;
+package com.tinqin.bff.customannotation.exception;
 
-public class InvalidRequestLineException extends Throwable {
+public class InvalidRequestLineException extends RuntimeException {
 
     private static final String MESSAGE = "RequestLine must have request method type.";
 

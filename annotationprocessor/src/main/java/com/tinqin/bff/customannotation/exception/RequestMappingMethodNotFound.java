@@ -1,6 +1,6 @@
-package com.tinqin.bff.core.exception;
+package com.tinqin.bff.customannotation.exception;
 
-public class RequestMappingMethodNotFound extends Throwable {
+public class RequestMappingMethodNotFound extends RuntimeException {
 
     private static final String MESSAGE = "RequestMapping must have request method type.";
 

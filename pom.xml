@@ -11,6 +11,7 @@
         <module>domain</module>
         <module>persistence</module>
         <module>restexport</module>
+        <module>annotationprocessor</module>
     </modules>
 
     <parent>

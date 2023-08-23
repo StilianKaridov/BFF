@@ -10,6 +10,11 @@ import com.tinqin.bff.api.operations.user.register.UserRegisterOperation;
 import com.tinqin.bff.api.operations.user.register.UserRegisterRequest;
 import com.tinqin.bff.api.operations.user.register.UserRegisterResponse;
 import com.tinqin.bff.customannotation.annotation.GenerateRestExport;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +41,12 @@ public class UserController {
         this.userChangePasswordOperation = userChangePasswordOperation;
     }
 
+    @Operation(description = "Registers user with firstName, lastName, email, password, phoneNumber",
+            summary = "Registers user.")
+    @ApiResponse(responseCode = "200", description = "Successfully registered user.")
+    @ApiResponse(responseCode = "400",
+            description = "User with that email/phoneNumber already exists.",
+            content = {@Content(examples = @ExampleObject(value = "User with that email/phoneNumber already exists."), mediaType = "text/html")})
     @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(
             @RequestBody @Valid UserRegisterRequest userRegisterRequest
@@ -45,6 +56,15 @@ public class UserController {
         return ResponseEntity.status(201).body(registeredUserResponse);
     }
 
+    @Operation(description = "Logins user. Authenticate with email and password.",
+            summary = "Logins user.")
+    @ApiResponse(responseCode = "200", description = "User logged.")
+    @ApiResponse(responseCode = "400",
+            description = "Bad credentials.",
+            content = {@Content(examples = @ExampleObject(value = "Bad credentials"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "No such username in the database.",
+            content = {@Content(examples = @ExampleObject(value = "User not existing."), mediaType = "text/html")})
     @GenerateRestExport
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(
@@ -55,6 +75,16 @@ public class UserController {
         return ResponseEntity.ok(loggedInUserResponse);
     }
 
+    @Operation(description = "Changes the password of the current logged in user.",
+            summary = "Change password.")
+    @ApiResponse(responseCode = "200", description = "Password changed successfully.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "Invalid JWT.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @GenerateRestExport
     @PutMapping("/changePassword")
     public ResponseEntity<UserChangePasswordResponse> changePassword(

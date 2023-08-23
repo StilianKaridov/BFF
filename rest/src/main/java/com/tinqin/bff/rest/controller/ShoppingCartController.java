@@ -16,6 +16,11 @@ import com.tinqin.bff.api.operations.cart.sell.CartSellOperation;
 import com.tinqin.bff.api.operations.cart.sell.CartSellRequest;
 import com.tinqin.bff.api.operations.cart.sell.CartSellResponse;
 import com.tinqin.bff.customannotation.annotation.GenerateRestExport;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +53,19 @@ public class ShoppingCartController {
         this.cartSellOperation = cartSellOperation;
     }
 
+    @Operation(description = "Gets all items from the current logged in user's cart.",
+            summary = "Gets info about user's cart.")
+    @ApiResponse(responseCode = "200", description = "All items from the cart.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "User's cart is empty.",
+            content = {@Content(examples = @ExampleObject(value = "User's cart is empty."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "JWT is invalid.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @GenerateRestExport
     @GetMapping
     public ResponseEntity<CartDetailedViewResponse> detailedInformation(
@@ -63,6 +81,22 @@ public class ShoppingCartController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(description = "Adds an item to the current logged in user's cart.",
+            summary = "Adds an item to cart.")
+    @ApiResponse(responseCode = "201", description = "Item is added to the cart.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Item does not exists.",
+            content = {@Content(examples = @ExampleObject(value = "No such item."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Not enough quantity for the item.",
+            content = {@Content(examples = @ExampleObject(value = "Not enough quantity!"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "JWT is invalid.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @GenerateRestExport
     @PostMapping
     public ResponseEntity<CartAddResponse> addItemToCart(
@@ -81,6 +115,19 @@ public class ShoppingCartController {
         return ResponseEntity.status(201).body(response);
     }
 
+    @Operation(description = "Deletes an item from the current logged in user's cart.",
+            summary = "Deletes an item from cart.")
+    @ApiResponse(responseCode = "200", description = "Item is removed from the cart.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Item does not exists.",
+            content = {@Content(examples = @ExampleObject(value = "No such item."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "JWT is invalid.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @Transactional
     @DeleteMapping("/item")
     public ResponseEntity<CartDeleteByItemResponse> deleteItemFromCart(
@@ -98,6 +145,22 @@ public class ShoppingCartController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(description = "User buys all items from his cart.",
+            summary = "User buys all items from his cart.")
+    @ApiResponse(responseCode = "200", description = "Returns the bought items and the total price.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "User's cart is empty.",
+            content = {@Content(examples = @ExampleObject(value = "User's cart is empty."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Not enough quantity for an item from the cart.",
+            content = {@Content(examples = @ExampleObject(value = "Not enough quantity for 'item id'"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "JWT is invalid.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @Transactional
     @DeleteMapping("/sell")
     public ResponseEntity<CartSellResponse> sellUserCart(Principal principal) {
@@ -112,6 +175,19 @@ public class ShoppingCartController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(description = "Deletes all items from user's cart.",
+            summary = "Deletes user's cart.")
+    @ApiResponse(responseCode = "200", description = "Returns the deleted items and current logged in user id.")
+    @ApiResponse(responseCode = "400",
+            description = "Not existing user.",
+            content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "User cart is empty.",
+            content = {@Content(examples = @ExampleObject(value = "User's cart is empty."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "403",
+            description = "JWT is invalid.",
+            content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
+    @SecurityRequirement(name = "Bearer Authentication")
     @Transactional
     @DeleteMapping
     public ResponseEntity<CartDeleteResponse> deleteUserCart(Principal principal) {

@@ -43,7 +43,7 @@ public class UserController {
 
     @Operation(description = "Registers user with firstName, lastName, email, password, phoneNumber",
             summary = "Registers user.")
-    @ApiResponse(responseCode = "200", description = "Successfully registered user.")
+    @ApiResponse(responseCode = "201", description = "Successfully registered user.")
     @ApiResponse(responseCode = "400",
             description = "User with that email/phoneNumber already exists.",
             content = {@Content(examples = @ExampleObject(value = "User with that email/phoneNumber already exists."), mediaType = "text/html")})

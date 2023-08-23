@@ -47,6 +47,27 @@ public class UserController {
     @ApiResponse(responseCode = "400",
             description = "User with that email/phoneNumber already exists.",
             content = {@Content(examples = @ExampleObject(value = "User with that email/phoneNumber already exists."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "First name must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "First name is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Last name must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Last name is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Email must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Email is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Invalid email format.",
+            content = {@Content(examples = @ExampleObject(value = "Invalid email format."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Password must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Password is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Invalid phone number format.",
+            content = {@Content(examples = @ExampleObject(value = "Invalid phone number format!"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Phone number must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Phone number is required."), mediaType = "text/html")})
     @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(
             @RequestBody @Valid UserRegisterRequest userRegisterRequest
@@ -65,6 +86,15 @@ public class UserController {
     @ApiResponse(responseCode = "400",
             description = "No such username in the database.",
             content = {@Content(examples = @ExampleObject(value = "User not existing."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Email must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Email is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Invalid email format.",
+            content = {@Content(examples = @ExampleObject(value = "Invalid email format."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Password must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Password is required."), mediaType = "text/html")})
     @GenerateRestExport
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(
@@ -81,6 +111,9 @@ public class UserController {
     @ApiResponse(responseCode = "400",
             description = "Not existing user.",
             content = {@Content(examples = @ExampleObject(value = "This user does not exist."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Password must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Password is required."), mediaType = "text/html")})
     @ApiResponse(responseCode = "403",
             description = "Invalid JWT.",
             content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})

@@ -93,6 +93,18 @@ public class ShoppingCartController {
     @ApiResponse(responseCode = "400",
             description = "Not enough quantity for the item.",
             content = {@Content(examples = @ExampleObject(value = "Not enough quantity!"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Invalid UUID format.",
+            content = {@Content(examples = @ExampleObject(value = "Invalid UUID format!"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Item id must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Item id is required."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Minimum quantity must be one.",
+            content = {@Content(examples = @ExampleObject(value = "Quantity must be a positive number."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Quantity must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Quantity is required."), mediaType = "text/html")})
     @ApiResponse(responseCode = "403",
             description = "JWT is invalid.",
             content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})
@@ -124,6 +136,12 @@ public class ShoppingCartController {
     @ApiResponse(responseCode = "400",
             description = "Item does not exists.",
             content = {@Content(examples = @ExampleObject(value = "No such item."), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Invalid UUID format.",
+            content = {@Content(examples = @ExampleObject(value = "Invalid UUID format!"), mediaType = "text/html")})
+    @ApiResponse(responseCode = "400",
+            description = "Item id must not be blank.",
+            content = {@Content(examples = @ExampleObject(value = "Item id is required."), mediaType = "text/html")})
     @ApiResponse(responseCode = "403",
             description = "JWT is invalid.",
             content = {@Content(examples = @ExampleObject(value = ""), mediaType = "text/html")})

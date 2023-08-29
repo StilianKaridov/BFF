@@ -29,6 +29,12 @@
             <artifactId>restexport</artifactId>
             <version>${zoostore.revision}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.tinqin.payment</groupId>
+            <artifactId>restexport</artifactId>
+            <version>${payment.revision}</version>
+        </dependency>
     </dependencies>
 
 </project>

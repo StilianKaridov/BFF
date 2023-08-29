@@ -5,6 +5,7 @@ import com.tinqin.bff.core.exception.NoSuchItemException;
 import com.tinqin.bff.core.exception.NoSuchUserException;
 import com.tinqin.bff.core.exception.NotEnoughQuantityException;
 import com.tinqin.bff.core.exception.EmptyUserCartException;
+import com.tinqin.bff.core.exception.UnsuccessfulPaymentException;
 import com.tinqin.bff.core.exception.UserExistsException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -88,5 +89,10 @@ public class GlobalExceptionHandler {
         });
 
         return ResponseEntity.badRequest().body(errors.toString());
+    }
+
+    @ExceptionHandler(value = UnsuccessfulPaymentException.class)
+    public ResponseEntity<String> handlerUnsuccessfulPaymentException(UnsuccessfulPaymentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

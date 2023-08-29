@@ -29,6 +29,7 @@
         <revision>0.0.2-SNAPSHOT</revision>
         <storage.revision>0.0.3-SNAPSHOT</storage.revision>
         <zoostore.revision>0.0.4-SNAPSHOT</zoostore.revision>
+        <payment.revision>0.0.1-SNAPSHOT</payment.revision>
         <jjwt.revision>0.11.5</jjwt.revision>
     </properties>
 

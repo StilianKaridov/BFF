@@ -181,11 +181,17 @@ public class ShoppingCartController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Transactional
     @DeleteMapping("/sell")
-    public ResponseEntity<CartSellResponse> sellUserCart(Principal principal) {
+    public ResponseEntity<CartSellResponse> sellUserCart(
+            Principal principal,
+            @RequestBody @Valid CartSellRequest cartSellRequest
+    ) {
         CartSellRequest request = CartSellRequest
                 .builder()
-                .creditCardNumber("12345")
                 .email(principal.getName())
+                .cardNumber(cartSellRequest.getCardNumber())
+                .expMonth(cartSellRequest.getExpMonth())
+                .expYear(cartSellRequest.getExpYear())
+                .cvc(cartSellRequest.getCvc())
                 .build();
 
         CartSellResponse response = this.cartSellOperation.process(request);

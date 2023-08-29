@@ -54,6 +54,7 @@ services:
       - mysql-server
       - zoostore
       - storage
+      - payment
     build: ../BFF
     restart: on-failure
     ports:
@@ -66,6 +67,14 @@ services:
            "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQLDialect",
            "spring.jpa.hibernate.ddl-auto" : "update"
          }'
+    stdin_open: true
+    tty: true
+
+  payment:
+    build: ../Payment
+    restart: on-failure
+    ports:
+      - "8083:8083"
     stdin_open: true
     tty: true
 
